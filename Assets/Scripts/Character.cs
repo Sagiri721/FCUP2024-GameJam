@@ -6,24 +6,30 @@ public class Character : MonoBehaviour
 {
     public Stats playerStats;
 
+    [SerializeField] private Transform groundCheck, wallCheck;
+
     private Rigidbody2D rb;
-    [SerializeField] private Transform groundCheck;
-    private BoxCollider2D groundCollider;
+    private BoxCollider2D groundCollider, wallCollider;
+    private Animator animator;
 
     private float jumpTimeCounter, 
         coyoteTimeCounter, 
         jumpBufferCounter = 0;
 
     private Vector2 movement;
+
+    // State booleans
     private bool grounded = false, 
+        wallSliding = false,
         crouched = false, 
         jumping = false, 
         isFacingRight = true,
         running = false;
 
-    Animator animator;
+    private bool isWalljumping;
+    private float walljumpingDir, walljumpingCounter;
 
-    Vector2 respawnPoint;
+    private Vector2 respawnPoint;
 
     void Start()
     {
@@ -33,6 +39,7 @@ public class Character : MonoBehaviour
         animator = GetComponent<Animator>();
 
         groundCollider = groundCheck.gameObject.GetComponent<BoxCollider2D>();
+        wallCollider = wallCheck.gameObject.GetComponent<BoxCollider2D>();
 
         animator.SetBool("walk", false);
         animator.SetBool("run", false);
@@ -42,6 +49,7 @@ public class Character : MonoBehaviour
     {
         // Get frame constants
         grounded = isGrounded();
+        wallSliding = isOnWall();
 
         crouched = movement.x == 0 && Input.GetAxisRaw("Vertical") < 0;
         running = Input.GetKey(playerStats.runKey);
@@ -52,6 +60,7 @@ public class Character : MonoBehaviour
         handleFlip();
 
         rb.velocity = movement;
+        movement = new Vector2();
 
         // Respawn code
         if (transform.position.y < -10) {
@@ -82,19 +91,23 @@ public class Character : MonoBehaviour
         float direction = crouched ? 0 : Input.GetAxisRaw("Horizontal") * speed;
 
         movement = new Vector2(
-            direction,
+            isWalljumping ? 0 : direction,
             rb.velocity.y
         );
     }
 
     private bool isGrounded() {
+        return Physics2D.BoxCast(groundCheck.position, groundCollider.bounds.size, 0, Vector2.down, 1f, playerStats.groundLayer);;
+    }
 
-        RaycastHit2D hit = Physics2D.BoxCast(groundCheck.position, groundCollider.bounds.size, 0, Vector2.down, 1f, playerStats.groundLayer);
-        return hit;
+    private bool isOnWall() {
+        return Physics2D.BoxCast(wallCheck.position, wallCollider.bounds.size, 0, Vector2.right * (isFacingRight ? 1 : -1), 1f, playerStats.groundLayer);;
     }
 
     private void handleFlip()
     {
+        if(isWalljumping) return;
+
         if (isFacingRight && movement.x < 0f || !isFacingRight && movement.x > 0f)
         {
             isFacingRight = !isFacingRight;
@@ -154,6 +167,45 @@ public class Character : MonoBehaviour
         }
 
         movement.y = Mathf.Clamp(movement.y, -playerStats.gravityClamp, playerStats.gravityClamp);
+
+        // Wall jumping
+        // handleWallJumping(jumped);
+    }
+
+    private void stopWalljump(){ isWalljumping = false; }
+
+    private void handleWallJumping(bool jumped){
+
+        // Handle wall sliding
+        if(wallSliding && !grounded && rb.velocity.x != 0){
+
+            // Apply the lesser velocity
+            movement.y =  Mathf.Clamp(rb.velocity.y, -playerStats.wallSlidingSpeed, float.MaxValue);
+
+            // Prepare wall jump
+            isWalljumping = false;
+            walljumpingDir = -Mathf.Sign(transform.localScale.x);
+            walljumpingCounter = playerStats.wallJumpingTime;
+
+            CancelInvoke(nameof(stopWalljump));
+
+        } else { walljumpingCounter -= Time.deltaTime; }
+
+        if(jumped && walljumpingCounter > 0f){
+
+            // Perform wall jump
+            isWalljumping = true;
+
+            movement = new Vector2(
+                playerStats.wallJumpingPower.x * walljumpingDir, 
+                playerStats.wallJumpingPower.y
+            );
+
+            walljumpingCounter = 0;
+
+            // Stop wall jump timer
+            Invoke(nameof(stopWalljump), playerStats.wallJumpingDuration);
+        }
     }
 
     void respawn(){
