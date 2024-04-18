@@ -52,7 +52,7 @@ public class Character : MonoBehaviour
         wallSliding = isOnWall();
 
         crouched = movement.x == 0 && Input.GetAxisRaw("Vertical") < 0;
-        running = Input.GetKey(playerStats.runKey);
+        running = Utils.GetKeyAll(playerStats.runKeys);
 
         handleMovement();
         handleAnimationState();
@@ -209,7 +209,6 @@ public class Character : MonoBehaviour
     }
 
     void respawn(){
-
         transform.position = respawnPoint;
     }
 

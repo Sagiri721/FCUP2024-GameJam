@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Stats
   m_EditorClassIdentifier: 
   jumpKeys: 11010000770000007a000000
-  runKey: 304
+  runKeys: 30010000
   walkSpeed: 6
   runSpeed: 8
   jumpPower: 10

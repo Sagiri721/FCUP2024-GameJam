@@ -1018,6 +1018,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7517538597119670484, guid: 09728859666e23642b5906ba6917f74c, type: 3}
+      propertyPath: dialogue.text.Array.data[0]
+      value: Hello World
+      objectReference: {fileID: 0}
+    - target: {fileID: 7517538597119670484, guid: 09728859666e23642b5906ba6917f74c, type: 3}
+      propertyPath: dialogue.text.Array.data[1]
+      value: 'Crazy? I Was Crazy Once. They Locked Me In A Room. A Rubber Room. A
+        Rubber Room With Rats. And Rats Make Me Crazy. Crazy? I Was Crazy Once. They
+        Locked Me In A Room. A Rubber Room. A Rubber Room With Rats. And Rats Make
+        Me Crazy. '
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

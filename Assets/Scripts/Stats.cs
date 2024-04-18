@@ -9,7 +9,7 @@ public class Stats : ScriptableObject
     [Header("Input Configuration")]
     public KeyCode[] jumpKeys = {KeyCode.UpArrow, KeyCode.W};
 
-    public KeyCode runKey = KeyCode.LeftShift;
+    public KeyCode[] runKeys = {KeyCode.LeftShift};
 
     [Header("Movement")]
     public float walkSpeed = 6;
