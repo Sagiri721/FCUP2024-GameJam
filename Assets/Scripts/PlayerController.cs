@@ -11,11 +11,15 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
     private Rigidbody2D rb;
 
+    public Vector3 spawn;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         DontDestroyOnLoad(gameObject);
+
+        spawn = transform.position;
     }
 
     // Update is called once per frame
@@ -48,6 +52,11 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.walkSpeed;
         }
         //animator.SetInteger("direction", direction);
+    }
+
+    public void Die(){
+
+        transform.position = spawn;
     }
 
     //Inventory System

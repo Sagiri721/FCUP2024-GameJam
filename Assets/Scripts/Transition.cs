@@ -7,7 +7,7 @@ public class Transition : MonoBehaviour
     public Animator animator;
     private static Transition instance = null;
 
-    void Start(){
+    void Awake(){
 
         if (instance == null){
             instance = this;
@@ -19,7 +19,6 @@ public class Transition : MonoBehaviour
     public IEnumerator DoTransition(System.Action callback){
 
         animator.SetBool("isOpen", false);
-        
         // Wait for transition to end
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime <= 1f);
 
