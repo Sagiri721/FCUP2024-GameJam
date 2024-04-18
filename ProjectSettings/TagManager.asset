@@ -13,7 +13,7 @@ TagManager:
   - Water
   - UI
   - Player
-  - 
+  - Collider
   - 
   - 
   - 
@@ -41,4 +41,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Walls
+    uniqueID: 2116569641
+    locked: 0
+  - name: Player
+    uniqueID: 114130121
+    locked: 0
+  - name: Enemies
+    uniqueID: 2355542793
+    locked: 0
+  - name: HUD
+    uniqueID: 3310207265
     locked: 0
