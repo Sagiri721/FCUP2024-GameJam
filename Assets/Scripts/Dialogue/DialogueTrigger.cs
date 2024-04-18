@@ -13,7 +13,7 @@ public class DialogueTrigger : MonoBehaviour
     void Start(){
 
         // Find player
-        player = FindObjectOfType<Character>().gameObject.transform;
+        player = GameObject.FindWithTag("Player").transform;
     }
 
     void Update(){
