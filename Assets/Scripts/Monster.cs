@@ -21,7 +21,7 @@ public class Monster : MonoBehaviour
     public float nextPointSnap = 0.01f;
 
     private Vector2 startPosition;
-    private Vector3 direction;
+    private Vector3 direction, spawn;
     private int pointer = 0;
 
     Animator effects;
@@ -32,11 +32,23 @@ public class Monster : MonoBehaviour
         startPosition = transform.position;
 
         effects = GetComponent<Animator>();
+        spawn = transform.position;
     }
 
     void Update()
     {
         float distanceFromPlayer = (player.position - transform.position).magnitude;
+
+        if(distanceFromPlayer < 2){
+            if (Input.GetKeyDown(KeyCode.X) && 
+                        (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
+                GameObject effect = player.GetComponent<PlayerController>().biteEffect;
+                Instantiate(effect, transform.position, Quaternion.identity);
+                monsterState = StateMachine.DEAD;
+
+                GetComponent<SpriteRenderer>().color = Color.black;
+            }
+        }
 
         if(monsterState == StateMachine.WANDER) {
 
@@ -79,7 +91,7 @@ public class Monster : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, tween, step);
         }
 
-        if(monsterState != StateMachine.CHASE) handlePlayerDetection();
+        handlePlayerDetection();
     }
 
     void handlePlayerDetection(){
@@ -97,6 +109,7 @@ public class Monster : MonoBehaviour
 
                 //Check for walls in the way
                 RaycastHit2D ray = Physics2D.Raycast(transform.position, dirToTarget, enemyStats.checkDistance, enemyStats.collisionLayer);
+
                 if (!ray){
 
                     // Is within angle
@@ -104,6 +117,9 @@ public class Monster : MonoBehaviour
                     monsterState = StateMachine.SHOCK;
 
                     Invoke(nameof(StopTwitch), 1);    
+                } else {
+
+                    monsterState = StateMachine.WANDER;
                 }
                 
             }
@@ -127,18 +143,15 @@ public class Monster : MonoBehaviour
     void die(){
 
         monsterState = StateMachine.WANDER;
+        transform.position = spawn;
         player.GetComponent<PlayerController>().Die();
     }
 
-    void OnTriggerEnter2D(Collider2D collider){
+    void OnCollisionEnter2D(Collision2D collision){
 
-        if(collider.gameObject.tag == "Player" && 
+        if(collision.gameObject.tag == "Player" && 
             (monsterState != StateMachine.WANDER && monsterState != StateMachine.STOP)){
             StartCoroutine(Transition.getInstance().DoTransition(die));
-        }
-
-        if (Input.GetKeyDown(KeyCode.X)){
-            
         }
     }
 }

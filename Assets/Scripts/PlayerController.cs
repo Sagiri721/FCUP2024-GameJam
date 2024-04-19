@@ -2,14 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     public Stats stats;
+    public float stridePointer = 0f, strideHeightPercentage = 0.2f, strideDelta = 0.05f;
     public static bool playerExists, isPaused = false, isStopped = false;
     public int direction;
     public Animator animator;
     private Rigidbody2D rb;
+    private SpriteRenderer playerSprite;
+    public Sprite[] idleSprites;
+    public Sprite[] walkFrontSprites;
+    public Sprite[] walkBackSprites;
+    private bool facingFront = true;
+
+    public GameObject biteEffect;
 
     public Vector3 spawn;
 
@@ -17,6 +26,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerSprite = rb.GetComponentInChildren<SpriteRenderer>();
         DontDestroyOnLoad(gameObject);
 
         spawn = transform.position;
@@ -35,15 +45,19 @@ public class PlayerController : MonoBehaviour
         if(Input.anyKeyDown){
             if(Input.GetKeyDown(KeyCode.RightArrow)){
                 direction = 0;
+                playerSprite.transform.localScale = new Vector3(1, 1, 1);
             }
             if(Input.GetKeyDown(KeyCode.UpArrow)){
                 direction = 1;
+                facingFront = false;
             }
             if(Input.GetKeyDown(KeyCode.LeftArrow)){
                 direction = 2;
+                playerSprite.transform.localScale = new Vector3(-1, 1, 1);
             }
             if(Input.GetKeyDown(KeyCode.DownArrow)){
                 direction = 3;
+                facingFront = true;
             }
         }
         if(Utils.GetKeyAll(stats.runKeys)){
@@ -51,6 +65,7 @@ public class PlayerController : MonoBehaviour
         }else{
             rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.walkSpeed;
         }
+        if(rb.velocity != Vector2.zero) { StartCoroutine(walkCycle()); }
         //animator.SetInteger("direction", direction);
     }
 
@@ -58,9 +73,35 @@ public class PlayerController : MonoBehaviour
 
         transform.position = spawn;
     }
+    
+    public IEnumerator walkCycle(){
+        if(rb.velocity == Vector2.zero)
+        {
+            /*if(playerSprite.transform.localScale.x == 1){
+                playerSprite.sprite = idleSprites[0];
+            }else{
+                playerSprite.sprite = idleSprites[1];
+            }*/
+            if(playerSprite.transform.localPosition == Vector3.zero){
+                stridePointer = 0;
+                yield break;
+            }
+        }
+        float previousHeight = playerSprite.transform.localPosition.y;
+        playerSprite.transform.localPosition = new Vector2(0, Mathf.Abs(Mathf.Sin(stridePointer) * strideHeightPercentage));
+        if(playerSprite.transform.localPosition.y < previousHeight && playerSprite.transform.localPosition.y < Mathf.Abs(Mathf.Sin(stridePointer + strideDelta) * strideHeightPercentage)){
+            if(playerSprite.sprite == walkFrontSprites[1]){
+                playerSprite.sprite = walkFrontSprites[0];
+            }else{
+                playerSprite.sprite = walkFrontSprites[1];
+            }
+        }
+        stridePointer += strideDelta;
+        yield return null;
+    }
 
-    //Inventory System
     #region
+    //Inventory System
     //Inventory system. Can you honestly believe I made that in 11th grade?
     #region
     /*if (itemExists)
