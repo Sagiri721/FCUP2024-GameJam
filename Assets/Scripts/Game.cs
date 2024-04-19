@@ -8,6 +8,10 @@ using UnityEngine.SceneManagement;
 public class Game : MonoBehaviour
 {
 
+    public Image hungerBar;
+    private float hungerSize;
+    private PlayerController playerStats;
+
     void Awake(){
 
         // Load heads up display into current scene       
@@ -31,5 +35,16 @@ public class Game : MonoBehaviour
         DialogueManager.getInstance().animator = dialogueAnimator;
         DialogueManager.getInstance().nameText = nameText;
         DialogueManager.getInstance().dialogueText = bodyText;
+
+        hungerBar = GameObject.Find("bar").GetComponent<Image>();
+
+        playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        hungerSize = hungerBar.rectTransform.sizeDelta.y;
+    }
+
+    void Update(){
+
+        // Hunger display update
+        hungerBar.rectTransform.sizeDelta = new Vector2(hungerBar.rectTransform.sizeDelta.x, hungerSize * playerStats.stats.currentHunger);
     }
 }

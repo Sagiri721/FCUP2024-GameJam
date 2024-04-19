@@ -26,3 +26,4 @@ MonoBehaviour:
   collisionLayer:
     serializedVersion: 2
     m_Bits: 128
+  rotTime: 10
