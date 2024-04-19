@@ -18,7 +18,7 @@ public class DialogueTrigger : MonoBehaviour
 
     void Update(){
 
-        if (player != null && Input.GetKeyDown(KeyCode.X)){
+        if (player != null && Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys)){
 
             float distance = (player.position - transform.position).magnitude;
             if (distance < checkRadius){

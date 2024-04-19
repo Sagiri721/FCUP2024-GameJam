@@ -42,7 +42,7 @@ public class Monster : MonoBehaviour
         if(monsterState != StateMachine.DEAD){
 
             if(distanceFromPlayer < enemyStats.killRadius){
-                if (Input.GetKeyDown(KeyCode.X) && 
+                if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys) && 
                             (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
