@@ -12009,6 +12009,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8740037931232780261, guid: 5edb616deb584294cb346c1f98f0af1a, type: 3}
+      propertyPath: dragOffset.x
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8740037931232780261, guid: 5edb616deb584294cb346c1f98f0af1a, type: 3}
+      propertyPath: dragOffset.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -12052,9 +12060,6 @@ MonoBehaviour:
   stridePointer: 0
   strideHeightPercentage: 0.2
   strideDelta: 0.1
-  killRange: 0
-  carrySpeed: 0
-  hunger: 0
   direction: 0
   animator: {fileID: 0}
   idleSprites:
@@ -12063,8 +12068,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 72607568434142a408a6deb81e566303, type: 3}
   - {fileID: 21300000, guid: 2c02de1a6d5bc744dbe5adfde740a80e, type: 3}
   walkBackSprites: []
+  movement: {x: 0, y: 0, z: 0}
   biteEffect: {fileID: 7570879590124648679, guid: 4206115b2f0a65647bbd81ab8b348187, type: 3}
   spawn: {x: 0, y: 0, z: 0}
+  isDragging: 0
 --- !u!50 &198926955
 Rigidbody2D:
   serializedVersion: 4
