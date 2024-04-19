@@ -18,7 +18,7 @@ public class EnemyStats : ScriptableObject
     public bool hasRestTime = true;
     public float restTime = 1f;
 
-    public float killRadius = 0.1f;
+    public float killRadius = 2f;
 
     public LayerMask visionMask, collisionLayer;
 }

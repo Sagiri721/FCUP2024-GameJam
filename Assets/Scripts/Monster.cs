@@ -38,10 +38,10 @@ public class Monster : MonoBehaviour
     void Update()
     {
         float distanceFromPlayer = (player.position - transform.position).magnitude;
-        
+
         if(monsterState != StateMachine.DEAD){
 
-            if(distanceFromPlayer < 2){
+            if(distanceFromPlayer < enemyStats.killRadius){
                 if (Input.GetKeyDown(KeyCode.X) && 
                             (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;

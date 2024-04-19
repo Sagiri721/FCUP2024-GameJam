@@ -19,7 +19,7 @@ MonoBehaviour:
   checkDistance: 5
   hasRestTime: 1
   restTime: 3
-  killRadius: 1
+  killRadius: 2
   visionMask:
     serializedVersion: 2
     m_Bits: 64
