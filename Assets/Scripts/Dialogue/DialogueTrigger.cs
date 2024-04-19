@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour
 {
-    private float checkRadius = 1;
+    private float checkRadius = 2;
     private bool inDialogue = false;
 
     private Transform player;

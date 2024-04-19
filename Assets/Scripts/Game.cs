@@ -26,20 +26,21 @@ public class Game : MonoBehaviour
 
         Animator transitionAnimator = GameObject.Find("TransitionBlinds").GetComponent<Animator>();
         Animator dialogueAnimator = GameObject.Find("DialogueBox").GetComponent<Animator>();
-
-        TMPro.TextMeshProUGUI nameText = GameObject.Find("NameText").GetComponent<TMPro.TextMeshProUGUI>();
         TMPro.TextMeshProUGUI bodyText = GameObject.Find("BodyText").GetComponent<TMPro.TextMeshProUGUI>();
 
         Transition.getInstance().animator = transitionAnimator;
         
         DialogueManager.getInstance().animator = dialogueAnimator;
-        DialogueManager.getInstance().nameText = nameText;
         DialogueManager.getInstance().dialogueText = bodyText;
 
         hungerBar = GameObject.Find("bar").GetComponent<Image>();
 
         playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         hungerSize = hungerBar.rectTransform.sizeDelta.y;
+
+        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(Transition.getInstance().gameObject);
+        DontDestroyOnLoad(DialogueManager.getInstance().gameObject);
     }
 
     void Update(){
