@@ -52,7 +52,7 @@ public class Monster : MonoBehaviour
 
         if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG){
 
-            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult && monsterState == StateMachine.DEAD){
+            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult){
                 if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys) && 
                             (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
 
@@ -115,11 +115,13 @@ public class Monster : MonoBehaviour
             }
 
             handlePlayerDetection();
+
         } else {
+
             timerUntilEdible -= Time.deltaTime;
             if(distanceFromPlayer < enemyStats.killRadius){
 
-                if(timerUntilEdible <= 0f && Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys)){
+                if(timerUntilEdible <= 0f && Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys) && monsterState == StateMachine.DEAD){
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
                     switch (killReward){
