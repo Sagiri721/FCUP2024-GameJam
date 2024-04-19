@@ -20,9 +20,13 @@ public class PlayerController : MonoBehaviour
     public Sprite[] walkBackSprites;
     private bool facingFront = true, walking = false;
 
+    public Vector3 movement;
+
     public GameObject biteEffect;
 
     public Vector3 spawn;
+
+    public bool isDragging = false;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +40,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         //if (Input.GetKeyDown(KeyCode.Escape))
         //{
         //    isPaused = true;
@@ -67,13 +72,15 @@ public class PlayerController : MonoBehaviour
                 facingFront = true;
             }
         }
-        if(Utils.GetKeyAll(stats.runKeys)){
-            rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.runSpeed * stats.runSpeedMult;
-        }else{
-            rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.walkSpeed;
-        }
+
+        float speed = (Utils.GetKeyAll(stats.runKeys) ? stats.runSpeed * stats.runSpeedMult : stats.walkSpeed);
+        if (isDragging) speed = stats.dragSpeed * stats.dragSpeedMult;
+
+        Vector2 velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * speed;
+        rb.velocity = velocity;
+
         if(rb.velocity != Vector2.zero && !walking) { StartCoroutine(walkCycle()); }
-        //animator.SetInteger("direction", direction);
+        movement = rb.velocity;
     }
 
     public void Die(){

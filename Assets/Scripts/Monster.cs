@@ -32,7 +32,9 @@ public class Monster : MonoBehaviour
     private Vector3 direction, spawn;
     private int pointer = 0;
 
-    Animator effects;
+    private Animator effects;
+
+    public Vector3 dragOffset;
 
     void Start()
     {
@@ -47,16 +49,26 @@ public class Monster : MonoBehaviour
     {
         float distanceFromPlayer = (player.position - transform.position).magnitude;
 
-        if(monsterState != StateMachine.DEAD){
+        if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG){
 
             if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult){
                 if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys) && 
                             (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
+
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
                     monsterState = StateMachine.DEAD;
 
                     GetComponent<SpriteRenderer>().color = Color.black;
+
+                    // Remove light
+                    Destroy(transform.GetChild(0).gameObject);
+
+                    // Remove collider
+                    GetComponent<BoxCollider2D>().isTrigger = true;
+
+                    StopAllCoroutines();
+                    return;
                 }
             }
 
@@ -102,8 +114,11 @@ public class Monster : MonoBehaviour
             }
 
             handlePlayerDetection();
-        }else{
-            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult && Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys)){
+        } else {
+
+            // Check for dragging
+            if(distanceFromPlayer < enemyStats.killRadius){
+
                 GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                 Instantiate(effect, transform.position, Quaternion.identity);
                 switch (killReward){
@@ -118,6 +133,19 @@ public class Monster : MonoBehaviour
                 }
                 player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
                 Destroy(gameObject);
+              
+                bool dragKeys = Utils.GetKeyAll(player.GetComponent<PlayerController>().stats.actionKeys);
+              
+                monsterState = dragKeys ? StateMachine.DRAG : StateMachine.DEAD;  
+                player.GetComponent<PlayerController>().isDragging = dragKeys;
+            } 
+
+            if (monsterState == StateMachine.DRAG) {
+
+                dragOffset.x = player.GetComponentInChildren<SpriteRenderer>().transform.localScale.x == 1 ? -0.3f : 0.3f;
+
+                // Apply drag force
+                transform.position = player.transform.position + dragOffset;
             }
         }
     }
@@ -161,7 +189,12 @@ public class Monster : MonoBehaviour
         return new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0, Mathf.Cos(angle * Mathf.Deg2Rad));
     }
 
-    void EndRest(){ monsterState = StateMachine.WANDER; }
+    void EndRest(){ 
+
+        if(monsterState == StateMachine.DEAD || monsterState == StateMachine.DRAG) return;
+        monsterState = StateMachine.WANDER; 
+    }
+
     void StopTwitch(){ 
 
         monsterState = StateMachine.CHASE;

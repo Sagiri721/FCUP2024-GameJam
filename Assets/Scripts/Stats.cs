@@ -18,6 +18,7 @@ public class Stats : ScriptableObject
     [Header("Movement")]
     public float walkSpeed = 6;
     public float runSpeed = 8;
+    public float dragSpeed = 3;
 
     [Header("Multiplier Deltas")]
     public float runSpeedMultDelta = 0.05f;
