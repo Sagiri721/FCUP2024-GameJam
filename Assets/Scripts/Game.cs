@@ -45,6 +45,6 @@ public class Game : MonoBehaviour
     void Update(){
 
         // Hunger display update
-        hungerBar.rectTransform.sizeDelta = new Vector2(hungerBar.rectTransform.sizeDelta.x, hungerSize * playerStats.stats.currentHunger);
+        //hungerBar.rectTransform.sizeDelta = new Vector2(hungerBar.rectTransform.sizeDelta.x, hungerSize * playerStats.stats.currentHunger);
     }
 }

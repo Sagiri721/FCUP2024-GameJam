@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class Monster : MonoBehaviour
 {
     private Transform player;
     public StateMachine monsterState = StateMachine.WANDER;
+    private Light2D monsterLight;
 
     public enum StateMachine {
         WANDER,
@@ -29,7 +31,7 @@ public class Monster : MonoBehaviour
     }
     
     public KillReward killReward;
-    public float timerUntilEdible = 5f;
+    public float eatTime = 5f;
 
     private Vector2 startPosition;
     private Vector3 direction, spawn;
@@ -41,7 +43,7 @@ public class Monster : MonoBehaviour
     public Vector3 dragOffset;
     private ParticleSystem particles;
 
-    private bool isRotten = false;
+    private bool isRotten = false, isEaten = false;
 
     void Start()
     {
@@ -52,10 +54,17 @@ public class Monster : MonoBehaviour
         spawn = transform.position;
 
         particles = GetComponent<ParticleSystem>();
+        GetComponentsInChildren<Light2D>()[0].pointLightInnerAngle = enemyStats.checkAngle;
+        GetComponentsInChildren<Light2D>()[0].pointLightOuterAngle = enemyStats.checkAngle + 20;
+        GetComponentsInChildren<Light2D>()[0].pointLightInnerRadius = enemyStats.checkDistance;
+        GetComponentsInChildren<Light2D>()[0].pointLightOuterRadius = enemyStats.checkDistance + 0.7f;
+        GetComponentsInChildren<Light2D>()[1].pointLightInnerRadius = enemyStats.checkDistance;
+        GetComponentsInChildren<Light2D>()[1].pointLightOuterRadius = enemyStats.checkDistance + 0.7f;
     }
 
     void Update()
     {
+        transform.GetChild(0).up = direction;
         float distanceFromPlayer = (player.position - transform.position).magnitude;
 
         if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG) {
@@ -67,11 +76,14 @@ public class Monster : MonoBehaviour
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
                     monsterState = StateMachine.DEAD;
+                    GetComponentsInChildren<Light2D>()[0].enabled = false;
 
                     GetComponent<SpriteRenderer>().color = Color.black;
 
-                    // Remove light
-                    transform.GetChild(0).gameObject.active = false;
+                    // DON'T Remove light, just lower intensity and radius
+                    GetComponentsInChildren<Light2D>()[1].pointLightInnerRadius = enemyStats.checkDistance / 2;
+                    GetComponentsInChildren<Light2D>()[1].pointLightOuterRadius = enemyStats.checkDistance / 2 + 0.7f;
+                    GetComponentsInChildren<Light2D>()[1].intensity = 0.2f;
 
                     // Remove collider
                     GetComponent<BoxCollider2D>().isTrigger = true;
@@ -129,24 +141,13 @@ public class Monster : MonoBehaviour
 
         } else {
 
-            timerUntilEdible -= Time.deltaTime;
-            if(distanceFromPlayer < enemyStats.killRadius){
+            eatTime -= Time.deltaTime;
+            Debug.Log(eatTime);
+            if(distanceFromPlayer < enemyStats.killRadius && !isRotten){
 
-                if(timerUntilEdible <= 0f && Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys) && monsterState == StateMachine.DEAD){
-                    GameObject effect = player.GetComponent<PlayerController>().biteEffect;
-                    Instantiate(effect, transform.position, Quaternion.identity);
-                    switch (killReward){
-                        case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
-                            break;
-                        case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
-                            break;
-                        case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
-                            break;
-                        case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
-                            break;
-                    }
-                    player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
-                    Destroy(gameObject);
+                if(eatTime <= 0f && Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys) && monsterState == StateMachine.DEAD && !isEaten){
+                    Debug.Log("eating");
+                    StartCoroutine(feedProcess());
                 }
                 
               
@@ -164,6 +165,29 @@ public class Monster : MonoBehaviour
                 transform.position = player.transform.position + dragOffset;
             }
         }
+    }
+
+    public IEnumerator feedProcess(){
+        isEaten = true;
+        int counter = 0;
+        GameObject effect = player.GetComponent<PlayerController>().biteEffect;
+        while(counter < 5){
+            GameObject a = Instantiate(effect, transform.position, Quaternion.identity);
+            while(a != null) { yield return null; }
+            counter++;
+        }
+        switch (killReward){
+            case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
+                break;
+            case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
+                break;
+            case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
+                break;
+            case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
+                break;
+        }
+        player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
+        Destroy(gameObject);
     }
 
     void handlePlayerDetection(){
@@ -218,7 +242,8 @@ public class Monster : MonoBehaviour
     }
 
     void Rot(){
-
+        if(isEaten){return;}
+        isRotten = true;
         // Is within angle
         effects.SetBool("twitch", true);
         Invoke(nameof(StopTwitch), 3);
