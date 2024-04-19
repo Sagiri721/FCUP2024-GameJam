@@ -45,11 +45,14 @@ TagManager:
   - name: Walls
     uniqueID: 2116569641
     locked: 0
+  - name: Enemies
+    uniqueID: 2355542793
+    locked: 0
   - name: Player
     uniqueID: 114130121
     locked: 0
-  - name: Enemies
-    uniqueID: 2355542793
+  - name: Effects
+    uniqueID: 1476894569
     locked: 0
   - name: HUD
     uniqueID: 3310207265
