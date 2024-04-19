@@ -27,6 +27,7 @@ public class Monster : MonoBehaviour
         RUNSPEED,
         ENDURANCE
     }
+    
     public KillReward killReward;
     public float timerUntilEdible = 5f;
 
