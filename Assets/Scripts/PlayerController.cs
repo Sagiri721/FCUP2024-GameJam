@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
+
 
 public class PlayerController : MonoBehaviour
 {
     public Stats stats;
-    public float stridePointer = 0f, strideHeightPercentage = 0.2f, strideDelta = 0.05f;
-    public static bool playerExists, isPaused = false, isStopped = false;
+    public float stridePointer = 0f, strideHeightPercentage = 0.2f, strideDelta = 0.05f, killRange, carrySpeed, hunger;
+    public static bool playerExists, isPaused = false, isStopped = false, isCarrying = false;
     public int direction;
     public Animator animator;
     private Rigidbody2D rb;
@@ -28,8 +30,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         playerSprite = rb.GetComponentInChildren<SpriteRenderer>();
         DontDestroyOnLoad(gameObject);
-
         spawn = transform.position;
+        killRange = GetComponentInChildren<Light2D>().pointLightInnerRadius;
     }
 
     // Update is called once per frame

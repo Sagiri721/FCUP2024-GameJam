@@ -15,7 +15,7 @@ MonoBehaviour:
   wanderSpeed: 4
   chaseSpeed: 6
   tweenRate: 3
-  checkAngle: 120
+  checkAngle: 90
   checkDistance: 5
   hasRestTime: 1
   restTime: 3
