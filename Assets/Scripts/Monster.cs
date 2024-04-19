@@ -41,8 +41,11 @@ public class Monster : MonoBehaviour
 
     public Vector3 dragOffset;
     private ParticleSystem particles;
+    public SpriteRenderer shockSign, interactArrow, zKey, xKey;
 
-    private bool isRotten = false, isEaten = false;
+    private bool isRotten = false, isEaten = false, vulnerable = false;
+
+    public static bool targetInSight = false;
 
     void Start()
     {
@@ -56,7 +59,7 @@ public class Monster : MonoBehaviour
         GetComponentsInChildren<Light2D>()[0].pointLightInnerAngle = enemyStats.checkAngle;
         GetComponentsInChildren<Light2D>()[0].pointLightOuterAngle = enemyStats.checkAngle + 20;
         GetComponentsInChildren<Light2D>()[0].pointLightInnerRadius = enemyStats.checkDistance;
-        GetComponentsInChildren<Light2D>()[0].pointLightOuterRadius = enemyStats.checkDistance + 0.7f;
+        GetComponentsInChildren<Light2D>()[0].pointLightOuterRadius = enemyStats.checkDistance + 1.7f;
         GetComponentsInChildren<Light2D>()[1].pointLightInnerRadius = enemyStats.checkDistance;
         GetComponentsInChildren<Light2D>()[1].pointLightOuterRadius = enemyStats.checkDistance + 0.7f;
     }
@@ -68,10 +71,17 @@ public class Monster : MonoBehaviour
 
         if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG) {
 
-            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult){
-                if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys) && 
-                            (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
-
+            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult && 
+                            (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP) && (!targetInSight || (targetInSight && vulnerable))){
+                interactArrow.enabled = true;
+                xKey.enabled = true;
+                targetInSight = true;
+                vulnerable = true;
+                if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys)){
+                    interactArrow.enabled = false;
+                    xKey.enabled = false;
+                    targetInSight = false;
+                    vulnerable = false;
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
                     monsterState = StateMachine.DEAD;
@@ -87,13 +97,20 @@ public class Monster : MonoBehaviour
                     // Remove collider
                     GetComponent<BoxCollider2D>().isTrigger = true;
 
-                    StopAllCoroutines();
+                    //StopAllCoroutines();
 
                     // Start rotting process
                     Invoke(nameof(Rot), enemyStats.rotTime - 3);
                     return;
                 }
-            }   
+            }else{
+                interactArrow.enabled = false;
+                xKey.enabled = false;
+                if(vulnerable){
+                    targetInSight = false;
+                    vulnerable = false;
+                }
+            }
 
             if(monsterState == StateMachine.WANDER) {
 
@@ -142,11 +159,21 @@ public class Monster : MonoBehaviour
 
             eatTime -= Time.deltaTime;
             Debug.Log(eatTime);
-            if(distanceFromPlayer < enemyStats.killRadius && !isRotten){
+            if(distanceFromPlayer < enemyStats.killRadius && !isRotten && !isEaten){
 
-                if(eatTime <= 0f && Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys) && monsterState == StateMachine.DEAD && !isEaten){
-                    Debug.Log("eating");
-                    StartCoroutine(feedProcess());
+                if(eatTime <= 0f && monsterState == StateMachine.DEAD){
+                    zKey.enabled = false;
+                    xKey.enabled = true;
+                    interactArrow.enabled = true;
+                    if(Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys)){
+                        xKey.enabled = false;
+                        interactArrow.enabled = false;
+                        Debug.Log("eating");
+                        StartCoroutine(feedProcess());
+                    }
+                }else{
+                    zKey.enabled = true;
+                    interactArrow.enabled = true;
                 }
                 
               
@@ -154,7 +181,11 @@ public class Monster : MonoBehaviour
               
                 monsterState = dragKeys ? StateMachine.DRAG : StateMachine.DEAD;  
                 player.GetComponent<PlayerController>().isDragging = dragKeys;
-            } 
+            }else{
+                zKey.enabled = false;
+                xKey.enabled = false;
+                interactArrow.enabled = false;
+            }
 
             if (monsterState == StateMachine.DRAG) {
 
@@ -208,6 +239,10 @@ public class Monster : MonoBehaviour
                 if (!ray){
 
                     // Is within angle
+                    shockSign.enabled = true;
+                    interactArrow.enabled = false;
+                    zKey.enabled = false;
+                    xKey.enabled = false;
                     effects.SetBool("twitch", true);
                     monsterState = StateMachine.SHOCK;
 
@@ -236,6 +271,7 @@ public class Monster : MonoBehaviour
 
     void StopTwitch(){ 
 
+        shockSign.enabled = false;
         monsterState = StateMachine.CHASE;
         effects.SetBool("twitch", false); 
     }
