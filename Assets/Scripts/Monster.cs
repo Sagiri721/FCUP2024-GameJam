@@ -27,6 +27,7 @@ public class Monster : MonoBehaviour
         ENDURANCE
     }
     public KillReward killReward;
+    public float timerUntilEdible = 5f;
 
     private Vector2 startPosition;
     private Vector3 direction, spawn;
@@ -115,26 +116,28 @@ public class Monster : MonoBehaviour
 
             handlePlayerDetection();
         } else {
-
-            // Check for dragging
+            timerUntilEdible -= Time.deltaTime;
             if(distanceFromPlayer < enemyStats.killRadius){
 
-                GameObject effect = player.GetComponent<PlayerController>().biteEffect;
-                Instantiate(effect, transform.position, Quaternion.identity);
-                switch (killReward){
-                    case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
-                        break;
-                    case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
-                        break;
-                    case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
-                        break;
-                    case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
-                        break;
+                if(timerUntilEdible <= 0f && Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys)){
+                    GameObject effect = player.GetComponent<PlayerController>().biteEffect;
+                    Instantiate(effect, transform.position, Quaternion.identity);
+                    switch (killReward){
+                        case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
+                            break;
+                        case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
+                            break;
+                        case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
+                            break;
+                        case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
+                            break;
+                    }
+                    player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
+                    Destroy(gameObject);
                 }
-                player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
-                Destroy(gameObject);
+                
               
-                bool dragKeys = Utils.GetKeyAll(player.GetComponent<PlayerController>().stats.actionKeys);
+                bool dragKeys = Utils.GetKeyAll(player.GetComponent<PlayerController>().stats.runKeys);
               
                 monsterState = dragKeys ? StateMachine.DRAG : StateMachine.DEAD;  
                 player.GetComponent<PlayerController>().isDragging = dragKeys;
