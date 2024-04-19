@@ -52,7 +52,7 @@ public class Monster : MonoBehaviour
 
         if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG){
 
-            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult){
+            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult && monsterState == StateMachine.DEAD){
                 if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys) && 
                             (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
 
