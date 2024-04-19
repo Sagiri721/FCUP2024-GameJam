@@ -21,4 +21,6 @@ public class EnemyStats : ScriptableObject
     public float killRadius = 2f;
 
     public LayerMask visionMask, collisionLayer;
+
+    public float rotTime = 10f;
 }

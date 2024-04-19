@@ -36,6 +36,9 @@ public class Monster : MonoBehaviour
     private Animator effects;
 
     public Vector3 dragOffset;
+    private ParticleSystem particles;
+
+    private bool isRotten = false;
 
     void Start()
     {
@@ -44,13 +47,15 @@ public class Monster : MonoBehaviour
 
         effects = GetComponent<Animator>();
         spawn = transform.position;
+
+        particles = GetComponent<ParticleSystem>();
     }
 
     void Update()
     {
         float distanceFromPlayer = (player.position - transform.position).magnitude;
 
-        if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG){
+        if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG) {
 
             if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult){
                 if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys) && 
@@ -69,6 +74,9 @@ public class Monster : MonoBehaviour
                     GetComponent<BoxCollider2D>().isTrigger = true;
 
                     StopAllCoroutines();
+
+                    // Start rotting process
+                    Invoke(nameof(Rot), enemyStats.rotTime - 3);
                     return;
                 }
             }
@@ -204,6 +212,21 @@ public class Monster : MonoBehaviour
 
         monsterState = StateMachine.CHASE;
         effects.SetBool("twitch", false); 
+    }
+
+    void Rot(){
+
+        // Is within angle
+        effects.SetBool("twitch", true);
+        Invoke(nameof(StopTwitch), 3);
+        particles.Play();
+        Invoke(nameof(RottenDestroy), 3);
+        effects.SetBool("die", true);
+    }
+
+    void RottenDestroy(){
+
+        Destroy(gameObject);
     }
 
     void playerDie(){
