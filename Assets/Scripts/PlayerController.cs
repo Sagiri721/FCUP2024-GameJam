@@ -43,6 +43,12 @@ public class PlayerController : MonoBehaviour
         //    Time.timeScale = 0f;
         //}
         if (isPaused) { return; }
+        stats.currentHunger += stats.hungerDelta * stats.enduranceMult;
+        if(stats.currentHunger <= 0){
+            StopCoroutine(walkCycle());
+            //Death sequence
+            return;
+        }
         if(Input.anyKeyDown){
             if(Input.GetKeyDown(KeyCode.RightArrow)){
                 direction = 0;

@@ -55,16 +55,6 @@ public class Monster : MonoBehaviour
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
                     monsterState = StateMachine.DEAD;
-                    switch (killReward){
-                        case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
-                            break;
-                        case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
-                            break;
-                        case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
-                            break;
-                        case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
-                            break;
-                    }
 
                     GetComponent<SpriteRenderer>().color = Color.black;
                 }
@@ -112,6 +102,23 @@ public class Monster : MonoBehaviour
             }
 
             handlePlayerDetection();
+        }else{
+            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult && Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys)){
+                GameObject effect = player.GetComponent<PlayerController>().biteEffect;
+                Instantiate(effect, transform.position, Quaternion.identity);
+                switch (killReward){
+                    case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
+                        break;
+                    case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
+                        break;
+                    case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
+                        break;
+                    case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
+                        break;
+                }
+                player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
+                Destroy(gameObject);
+            }
         }
     }
 
