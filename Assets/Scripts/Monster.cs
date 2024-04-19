@@ -49,6 +49,9 @@ public class Monster : MonoBehaviour
                     monsterState = StateMachine.DEAD;
 
                     GetComponent<SpriteRenderer>().color = Color.black;
+
+                    // Remove light
+                    Destroy(transform.GetChild(0).gameObject);
                 }
             }
 
