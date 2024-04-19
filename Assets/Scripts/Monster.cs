@@ -20,6 +20,14 @@ public class Monster : MonoBehaviour
     public Vector2[] path;
     public float nextPointSnap = 0.01f;
 
+    public enum KillReward {
+        KILLRANGE,
+        DRAGSPEED,
+        RUNSPEED,
+        ENDURANCE
+    }
+    public KillReward killReward;
+
     private Vector2 startPosition;
     private Vector3 direction, spawn;
     private int pointer = 0;
@@ -41,12 +49,22 @@ public class Monster : MonoBehaviour
 
         if(monsterState != StateMachine.DEAD){
 
-            if(distanceFromPlayer < enemyStats.killRadius){
+            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult){
                 if (Utils.GetKeyDownAll(player.gameObject.GetComponent<PlayerController>().stats.actionKeys) && 
                             (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP)){
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
                     monsterState = StateMachine.DEAD;
+                    switch (killReward){
+                        case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
+                            break;
+                        case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
+                            break;
+                        case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
+                            break;
+                        case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
+                            break;
+                    }
 
                     GetComponent<SpriteRenderer>().color = Color.black;
                 }

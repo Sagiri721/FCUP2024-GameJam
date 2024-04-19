@@ -19,12 +19,6 @@ public class Stats : ScriptableObject
     public float killRangeMultDelta = 0.05f;
     public float enduranceMultDelta = -0.05f;
 
-    [Header("Boost Progress Counters")]
-    public int runSpeedProgress = 0;
-    public int dragSpeedProgress = 0;
-    public int killRangeProgress = 0;
-    public int enduranceProgress = 0;
-
     [Header("Multipliers")]
     public float runSpeedMult = 1f;
     public float dragSpeedMult = 1f;

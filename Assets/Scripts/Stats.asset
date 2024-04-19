@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063b5edaeff2c3e4695d293bbf5c5c7e, type: 3}
+  m_Name: Stats
+  m_EditorClassIdentifier: 
+  actionKeys: 78000000
+  runKeys: 7a000000
+  walkSpeed: 6
+  runSpeed: 8
+  runSpeedMultDelta: 0.05
+  dragSpeedMultDelta: 0.05
+  killRangeMultDelta: 0.05
+  enduranceMultDelta: -0.05
+  runSpeedProgress: 0
+  dragSpeedProgress: 0
+  killRangeProgress: 0
+  enduranceProgress: 0
+  runSpeedMult: 1
+  dragSpeedMult: 1
+  killRangeMult: 1
+  enduranceMult: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0

@@ -9,7 +9,7 @@ using UnityEngine.Rendering.Universal;
 public class PlayerController : MonoBehaviour
 {
     public Stats stats;
-    public float stridePointer = 0f, strideHeightPercentage = 0.15f, strideDelta = 0.09f, killRange, carrySpeed, hunger;
+    public float stridePointer = 0f, strideHeightPercentage = 0.15f, strideDelta = 0.09f;
     public static bool playerExists, isPaused = false, isStopped = false, isCarrying = false;
     public int direction;
     public Animator animator;
@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         if(Utils.GetKeyAll(stats.runKeys)){
-            rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.runSpeed;
+            rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.runSpeed * stats.runSpeedMult;
         }else{
             rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.walkSpeed;
         }
