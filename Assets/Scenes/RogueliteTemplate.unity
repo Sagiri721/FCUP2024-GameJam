@@ -4468,8 +4468,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 698b78521bdb5b7469944b86004d7efd, type: 2}
   stridePointer: 0
-  strideHeightPercentage: 0.25
-  strideDelta: 0.05
+  strideHeightPercentage: 0.15
+  strideDelta: 0.09
   killRange: 0
   carrySpeed: 0
   hunger: 0
@@ -4561,8 +4561,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 198926953}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5, y: -2.54, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -5, y: 2, z: 0}
+  m_LocalScale: {x: 1.7336, y: 1.7336, z: 1.7336}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 929714652}

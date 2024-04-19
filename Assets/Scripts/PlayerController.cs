@@ -9,7 +9,7 @@ using UnityEngine.Rendering.Universal;
 public class PlayerController : MonoBehaviour
 {
     public Stats stats;
-    public float stridePointer = 0f, strideHeightPercentage = 0.2f, strideDelta = 0.05f, killRange, carrySpeed, hunger;
+    public float stridePointer = 0f, strideHeightPercentage = 0.15f, strideDelta = 0.09f, killRange, carrySpeed, hunger;
     public static bool playerExists, isPaused = false, isStopped = false, isCarrying = false;
     public int direction;
     public Animator animator;
@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     public Sprite[] idleSprites;
     public Sprite[] walkFrontSprites;
     public Sprite[] walkBackSprites;
-    private bool facingFront = true;
+    private bool facingFront = true, walking = false;
 
     // Start is called before the first frame update
     void Start()
@@ -62,34 +62,36 @@ public class PlayerController : MonoBehaviour
         }else{
             rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * stats.walkSpeed;
         }
-        if(rb.velocity != Vector2.zero) { StartCoroutine(walkCycle()); }
+        if(rb.velocity != Vector2.zero && !walking) { StartCoroutine(walkCycle()); }
         //animator.SetInteger("direction", direction);
     }
 
     public IEnumerator walkCycle(){
-        if(rb.velocity == Vector2.zero)
-        {
-            /*if(playerSprite.transform.localScale.x == 1){
-                playerSprite.sprite = idleSprites[0];
-            }else{
-                playerSprite.sprite = idleSprites[1];
-            }*/
-            if(playerSprite.transform.localPosition == Vector3.zero){
-                stridePointer = 0;
-                yield break;
+        walking = true;
+        while(walking){
+            float previousHeight = playerSprite.transform.localPosition.y;
+            playerSprite.transform.localPosition = new Vector2(0, Mathf.Abs(Mathf.Sin(stridePointer) * strideHeightPercentage));
+            if(playerSprite.transform.localPosition.y < previousHeight && playerSprite.transform.localPosition.y < Mathf.Abs(Mathf.Sin(stridePointer + strideDelta) * strideHeightPercentage)){
+                if(rb.velocity == Vector2.zero){
+                    /*if(playerSprite.transform.localScale.x == 1){
+                        playerSprite.sprite = idleSprites[0];
+                    }else{
+                        playerSprite.sprite = idleSprites[1];
+                    }*/
+                    playerSprite.sprite = idleSprites[0];
+                    stridePointer = 0;
+                    walking = false;
+                    yield break;
+                }
+                if(playerSprite.sprite == walkFrontSprites[1]){
+                    playerSprite.sprite = walkFrontSprites[0];
+                }else{
+                    playerSprite.sprite = walkFrontSprites[1];
+                }
             }
+            stridePointer += strideDelta;
+            yield return null;
         }
-        float previousHeight = playerSprite.transform.localPosition.y;
-        playerSprite.transform.localPosition = new Vector2(0, Mathf.Abs(Mathf.Sin(stridePointer) * strideHeightPercentage));
-        if(playerSprite.transform.localPosition.y < previousHeight && playerSprite.transform.localPosition.y < Mathf.Abs(Mathf.Sin(stridePointer + strideDelta) * strideHeightPercentage)){
-            if(playerSprite.sprite == walkFrontSprites[1]){
-                playerSprite.sprite = walkFrontSprites[0];
-            }else{
-                playerSprite.sprite = walkFrontSprites[1];
-            }
-        }
-        stridePointer += strideDelta;
-        yield return null;
     }
 
     //Inventory System
