@@ -124,23 +124,7 @@ public class Monster : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, tween, step);
             }
 
-            if(monsterState == StateMachine.REVIVE) {
-
-                // Move towards enemy
-                float step = enemyStats.chaseSpeed * Time.deltaTime;
-
-                Vector3 tween = Vector3.Lerp(transform.position, reviveTarget.position, Time.deltaTime * enemyStats.tweenRate);
-                transform.position = Vector3.MoveTowards(transform.position, tween, step);
-
-                if (Vector3.Distance(transform.position, reviveTarget.position) < nextPointSnap) {
-                    
-                    // Revive ally
-                    monsterState = StateMachine.WANDER;
-                    reviveTarget.gameObject.GetComponent<Monster>().Revive();
-                }
-            }
-
-            if(monsterState != StateMachine.REVIVE) handlePlayerDetection();
+            handlePlayerDetection();
 
         } else {
 
@@ -181,15 +165,6 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public void Revive(){
-
-        monsterState = StateMachine.WANDER;
-
-        GetComponent<SpriteRenderer>().color = Color.white;
-        transform.GetChild(0).gameObject.active = true;
-        GetComponent<BoxCollider2D>().isTrigger = false;
-    }
-
     void handlePlayerDetection(){
 
         // Check if in vision cone
@@ -205,16 +180,6 @@ public class Monster : MonoBehaviour
 
                 //Check for walls in the way
                 RaycastHit2D ray = Physics2D.Raycast(transform.position, dirToTarget, float.MaxValue, enemyStats.collisionLayer);
-
-                if(target.gameObject.layer == LayerMask.GetMask("Monster")){
-
-                    effects.SetBool("twitch", true);
-                    monsterState = StateMachine.REVIVE;
-                    reviveTarget = target;
-
-                    Invoke(nameof(StopTwitch), 1);    
-                    return;
-                }
 
                 if (!ray){
 
