@@ -15,7 +15,6 @@ public class SliderPivot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("hello?");
         instance.value = PlayerController.currentHunger / 100f;
     }
 }

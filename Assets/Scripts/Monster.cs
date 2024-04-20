@@ -87,6 +87,7 @@ public class Monster : MonoBehaviour
                     vulnerable = false;
                     GameObject effect = player.GetComponent<PlayerController>().biteEffect;
                     Instantiate(effect, transform.position, Quaternion.identity);
+                    GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Bite");
                     monsterState = StateMachine.DEAD;
                     GetComponentsInChildren<Light2D>()[0].enabled = false;
 
@@ -208,15 +209,19 @@ public class Monster : MonoBehaviour
         GameObject effect = player.GetComponent<PlayerController>().biteEffect;
         while(counter < 5){
             GameObject a = Instantiate(effect, transform.position, Quaternion.identity);
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Bite");
             while(a != null) { yield return null; }
             counter++;
         }
         switch (killReward){
             case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
+                CooldownHandler.killType = 1;
                 break;
             case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
+                CooldownHandler.killType = 0;
                 break;
             case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
+                CooldownHandler.killType = 2;
                 break;
             case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
                 break;
@@ -240,7 +245,7 @@ public class Monster : MonoBehaviour
 
             // Check if in view angle
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            Debug.Log(Vector3.Angle(direction, dirToTarget));
+            //Debug.Log(Vector3.Angle(direction, dirToTarget));
             if(Vector3.Angle(direction, dirToTarget) < (enemyStats.checkAngle / 2)){
 
                 //Check for walls in the way
@@ -313,6 +318,8 @@ public class Monster : MonoBehaviour
 
         if(collision.gameObject.tag == "Player" && 
             (monsterState != StateMachine.WANDER && monsterState != StateMachine.STOP) && monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG){
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Death");
+            FindObjectOfType<AudioManager>().StopBackground();
             StartCoroutine(Transition.getInstance().DoTransition(playerDie));
         }
     }

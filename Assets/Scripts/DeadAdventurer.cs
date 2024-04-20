@@ -35,6 +35,7 @@ public class DeadAdventurer : MonoBehaviour
         GameObject effect = player.GetComponent<PlayerController>().biteEffect;
         while(counter < 5){
             GameObject a = Instantiate(effect, transform.position, Quaternion.identity);
+            GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Bite");
             while(a != null) { yield return null; }
             counter++;
         }

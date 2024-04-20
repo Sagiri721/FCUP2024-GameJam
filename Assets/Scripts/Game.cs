@@ -17,6 +17,9 @@ public class Game : MonoBehaviour
     void Start()
     {
         Destroy(GameObject.FindWithTag("menuUI"));
+        if(!FindObjectOfType<AudioManager>().IsCurrentlyPlaying("Level")){
+            FindObjectOfType<AudioManager>().Play("Level");
+        }
         
         // Get the animators and UI references from loaded scene
         DialogueManager dialogues = DialogueManager.getInstance();
