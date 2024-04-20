@@ -74,7 +74,7 @@ public class Monster : MonoBehaviour
 
         if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG) {
 
-            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult && 
+            if(distanceFromPlayer < enemyStats.killRadius * player.GetComponent<PlayerController>().stats.killRangeMult && !CooldownHandler.onCooldown &&
                             (monsterState == StateMachine.WANDER || monsterState == StateMachine.STOP) && (!targetInSight || (targetInSight && vulnerable))){
                 interactArrow.enabled = true;
                 xKey.enabled = true;
@@ -89,6 +89,8 @@ public class Monster : MonoBehaviour
                     Instantiate(effect, transform.position, Quaternion.identity);
                     monsterState = StateMachine.DEAD;
                     GetComponentsInChildren<Light2D>()[0].enabled = false;
+
+                    CooldownHandler.killTrigger = true;
 
                     GetComponent<SpriteRenderer>().color = Color.black;
 
@@ -219,7 +221,8 @@ public class Monster : MonoBehaviour
             case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
                 break;
         }
-        player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
+        PlayerController.currentHunger += player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
+        if(PlayerController.currentHunger > 100f) { PlayerController.currentHunger = 100f; }
         Destroy(gameObject);
     }
 

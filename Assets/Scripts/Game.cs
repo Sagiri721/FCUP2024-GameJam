@@ -8,10 +8,6 @@ using UnityEngine.SceneManagement;
 public class Game : MonoBehaviour
 {
 
-    public Image hungerBar;
-    private float hungerSize;
-    private PlayerController playerStats;
-
     void Awake(){
 
         // Load heads up display into current scene
@@ -20,31 +16,19 @@ public class Game : MonoBehaviour
 
     void Start()
     {
-
+        Destroy(GameObject.FindWithTag("menuUI"));
+        
         // Get the animators and UI references from loaded scene
         DialogueManager dialogues = DialogueManager.getInstance();
-
-        Animator dialogueAnimator = GameObject.Find("DialogueBox").GetComponent<Animator>();
-        TMPro.TextMeshProUGUI bodyText = GameObject.Find("BodyText").GetComponent<TMPro.TextMeshProUGUI>();
+        DontDestroyOnLoad(GameObject.FindWithTag("gameUI"));
 
         Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
 
-        DialogueManager.getInstance().animator = dialogueAnimator;
-        DialogueManager.getInstance().dialogueText = bodyText;
+        DialogueManager.getInstance().animator = GameObject.Find("DialogueBox").GetComponent<Animator>();
+        DialogueManager.getInstance().dialogueText = GameObject.Find("BodyText").GetComponent<TMPro.TextMeshProUGUI>();
 
-        hungerBar = GameObject.Find("bar").GetComponent<Image>();
-
-        playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        hungerSize = hungerBar.rectTransform.sizeDelta.y;
-
-        DontDestroyOnLoad(gameObject);
+        /*DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(Transition.getInstance().gameObject);
-        DontDestroyOnLoad(DialogueManager.getInstance().gameObject);
-    }
-
-    void Update(){
-
-        // Hunger display update
-        //hungerBar.rectTransform.sizeDelta = new Vector2(hungerBar.rectTransform.sizeDelta.x, hungerSize * playerStats.stats.currentHunger);
+        DontDestroyOnLoad(DialogueManager.getInstance().gameObject);*/
     }
 }

@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     public Stats stats;
     public float stridePointer = 0f, strideHeightPercentage = 0.15f, strideDelta = 0.09f;
+    public static float currentHunger;
     public static bool playerExists, isPaused = false, isStopped = false, isCarrying = false;
     public int direction;
     public Animator animator;
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour
         playerSprite = rb.GetComponentInChildren<SpriteRenderer>();
         DontDestroyOnLoad(gameObject);
         spawn = transform.position;
+        currentHunger = stats.maxHunger;
     }
 
     // Update is called once per frame
@@ -47,7 +49,8 @@ public class PlayerController : MonoBehaviour
         //    Time.timeScale = 0f;
         //}
         if (isPaused) { return; }
-        if(stats.currentHunger <= 0){
+        currentHunger += stats.hungerDelta * Time.deltaTime;
+        if(currentHunger <= 0){
             StopCoroutine(walkCycle());
             //Death sequence
             return;
@@ -84,13 +87,6 @@ public class PlayerController : MonoBehaviour
     public void Die(){
 
         SceneManager.LoadScene("You died");
-    }
-
-    public IEnumerator hungerConsumption(){
-        while(stats.currentHunger <= 0f){
-            yield return new WaitForSeconds(1f);
-            stats.currentHunger += stats.hungerDelta;
-        }
     }
     
     public IEnumerator walkCycle(){
