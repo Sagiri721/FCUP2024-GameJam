@@ -47,12 +47,11 @@ public class PlayerController : MonoBehaviour
         //    Time.timeScale = 0f;
         //}
         if (isPaused) { return; }
-        /*stats.currentHunger += stats.hungerDelta * stats.enduranceMult;
         if(stats.currentHunger <= 0){
             StopCoroutine(walkCycle());
             //Death sequence
             return;
-        }*/
+        }
         if(Input.anyKeyDown){
             if(Input.GetKeyDown(KeyCode.RightArrow)){
                 direction = 0;
@@ -86,6 +85,13 @@ public class PlayerController : MonoBehaviour
 
         SceneManager.LoadScene("You died");
     }
+
+    public IEnumerator hungerConsumption(){
+        while(stats.currentHunger <= 0f){
+            yield return new WaitForSeconds(1f);
+            stats.currentHunger += stats.hungerDelta;
+        }
+    }
     
     public IEnumerator walkCycle(){
         walking = true;
@@ -94,20 +100,27 @@ public class PlayerController : MonoBehaviour
             playerSprite.transform.localPosition = new Vector2(0, Mathf.Abs(Mathf.Sin(stridePointer) * strideHeightPercentage));
             if(playerSprite.transform.localPosition.y < previousHeight && playerSprite.transform.localPosition.y < Mathf.Abs(Mathf.Sin(stridePointer + strideDelta) * strideHeightPercentage)){
                 if(rb.velocity == Vector2.zero){
-                    /*if(playerSprite.transform.localScale.x == 1){
+                    if(facingFront){
                         playerSprite.sprite = idleSprites[0];
                     }else{
                         playerSprite.sprite = idleSprites[1];
-                    }*/
-                    playerSprite.sprite = idleSprites[0];
+                    }
                     stridePointer = 0;
                     walking = false;
                     yield break;
                 }
-                if(playerSprite.sprite == walkFrontSprites[1]){
-                    playerSprite.sprite = walkFrontSprites[0];
+                if(facingFront){
+                    if(playerSprite.sprite == walkFrontSprites[1]){
+                        playerSprite.sprite = walkFrontSprites[0];
+                    }else{
+                        playerSprite.sprite = walkFrontSprites[1];
+                    }
                 }else{
-                    playerSprite.sprite = walkFrontSprites[1];
+                    if(playerSprite.sprite == walkBackSprites[1]){
+                        playerSprite.sprite = walkBackSprites[0];
+                    }else{
+                        playerSprite.sprite = walkBackSprites[1];
+                    }
                 }
             }
             stridePointer += strideDelta;
