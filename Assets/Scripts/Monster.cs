@@ -29,6 +29,7 @@ public class Monster : MonoBehaviour
         RUNSPEED,
         ENDURANCE
     }
+    
     public KillReward killReward;
     public float eatTime = 5f;
 
@@ -66,7 +67,9 @@ public class Monster : MonoBehaviour
 
     void Update()
     {
-        transform.GetChild(0).up = direction;
+        if(monsterState == StateMachine.CHASE){ transform.GetChild(0).up = (player.position - transform.position).normalized; }
+        else transform.GetChild(0).up = direction;
+
         float distanceFromPlayer = (player.position - transform.position).magnitude;
 
         if(monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG) {
@@ -222,21 +225,25 @@ public class Monster : MonoBehaviour
 
     void handlePlayerDetection(){
 
+        Debug.DrawLine(transform.position, transform.position + direction);
+
         // Check if in vision cone
         Collider2D[] targetsInRadius = Physics2D.OverlapCircleAll(transform.position, enemyStats.checkDistance, enemyStats.visionMask);
 
         for(int i = 0; i < targetsInRadius.Length; i++){
-            
+
             Transform target = targetsInRadius[i].transform;
+
 
             // Check if in view angle
             Vector3 dirToTarget = (target.position - transform.position).normalized;
+            Debug.Log(Vector3.Angle(direction, dirToTarget));
             if(Vector3.Angle(direction, dirToTarget) < (enemyStats.checkAngle / 2)){
 
                 //Check for walls in the way
-                RaycastHit2D ray = Physics2D.Raycast(transform.position, dirToTarget, float.MaxValue, enemyStats.collisionLayer);
+                RaycastHit2D ray = Physics2D.Raycast(transform.position, dirToTarget, dirToTarget.magnitude, enemyStats.collisionLayer);
 
-                if (!ray){
+                if (!ray && monsterState != StateMachine.CHASE){
 
                     // Is within angle
                     shockSign.enabled = true;

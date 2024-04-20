@@ -14,7 +14,7 @@ public class Game : MonoBehaviour
 
     void Awake(){
 
-        // Load heads up display into current scene       
+        // Load heads up display into current scene
         SceneManager.LoadScene("HUD", LoadSceneMode.Additive);
     }
 
@@ -25,20 +25,21 @@ public class Game : MonoBehaviour
         DialogueManager dialogues = DialogueManager.getInstance();
 
         Animator dialogueAnimator = GameObject.Find("DialogueBox").GetComponent<Animator>();
-
-        TMPro.TextMeshProUGUI nameText = GameObject.Find("NameText").GetComponent<TMPro.TextMeshProUGUI>();
         TMPro.TextMeshProUGUI bodyText = GameObject.Find("BodyText").GetComponent<TMPro.TextMeshProUGUI>();
 
         Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
 
         DialogueManager.getInstance().animator = dialogueAnimator;
-        DialogueManager.getInstance().nameText = nameText;
         DialogueManager.getInstance().dialogueText = bodyText;
 
         hungerBar = GameObject.Find("bar").GetComponent<Image>();
 
         playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         hungerSize = hungerBar.rectTransform.sizeDelta.y;
+
+        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(Transition.getInstance().gameObject);
+        DontDestroyOnLoad(DialogueManager.getInstance().gameObject);
     }
 
     void Update(){

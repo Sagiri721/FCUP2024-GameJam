@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
     public void Die(){
 
-        transform.position = spawn;
+        SceneManager.LoadScene("You died");
     }
 
     public IEnumerator hungerConsumption(){

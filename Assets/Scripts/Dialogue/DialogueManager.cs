@@ -44,8 +44,6 @@ public class DialogueManager : MonoBehaviour
         this.dialogues = new Queue<string>(dialogueToDraw.text);
         this.name = dialogueToDraw.name;
 
-        nameText.text = this.name;
-
         // Show textbox
     }
 
