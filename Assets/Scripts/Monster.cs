@@ -9,6 +9,8 @@ public class Monster : MonoBehaviour
     public StateMachine monsterState = StateMachine.WANDER;
     private Light2D monsterLight;
 
+    public Sprite[] images;
+
     public enum StateMachine {
         WANDER,
         CHASE,
@@ -24,9 +26,9 @@ public class Monster : MonoBehaviour
     public float nextPointSnap = 0.01f;
 
     public enum KillReward {
-        KILLRANGE,
-        DRAGSPEED,
-        RUNSPEED,
+        KILLRANGE = 0,
+        DRAGSPEED = 1,
+        RUNSPEED = 2,
         ENDURANCE
     }
     
@@ -56,13 +58,20 @@ public class Monster : MonoBehaviour
         effects = GetComponent<Animator>();
         spawn = transform.position;
 
-        particles = GetComponent<ParticleSystem>();
+        particles = GetComponentInChildren<ParticleSystem>();
         GetComponentsInChildren<Light2D>()[0].pointLightInnerAngle = enemyStats.checkAngle;
         GetComponentsInChildren<Light2D>()[0].pointLightOuterAngle = enemyStats.checkAngle + 20;
         GetComponentsInChildren<Light2D>()[0].pointLightInnerRadius = enemyStats.checkDistance;
         GetComponentsInChildren<Light2D>()[0].pointLightOuterRadius = enemyStats.checkDistance + 1.7f;
         GetComponentsInChildren<Light2D>()[1].pointLightInnerRadius = enemyStats.checkDistance;
         GetComponentsInChildren<Light2D>()[1].pointLightOuterRadius = enemyStats.checkDistance + 0.7f;
+
+        int index = 0;
+        if (killReward == KillReward.KILLRANGE) index = 0;
+        if (killReward == KillReward.DRAGSPEED) index = 1;
+        if (killReward == KillReward.RUNSPEED) index = 2;
+
+        GetComponent<SpriteRenderer>().sprite = images[index];
     }
 
     void Update()
