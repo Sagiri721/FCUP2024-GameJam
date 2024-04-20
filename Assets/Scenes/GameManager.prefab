@@ -31,7 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &125907570058636883
 MonoBehaviour:
@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b72734a7b3b940b49aad979316bdc77a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
+  fadeImage: {fileID: 0}
+  fadeSpeed: 0.4
 --- !u!114 &7845064381310847407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,3 +59,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 107d02fb5446aab4f98a84642cd01da6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hungerBar: {fileID: 0}
