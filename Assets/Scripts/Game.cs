@@ -24,14 +24,13 @@ public class Game : MonoBehaviour
         // Get the animators and UI references from loaded scene
         DialogueManager dialogues = DialogueManager.getInstance();
 
-        Animator transitionAnimator = GameObject.Find("TransitionBlinds").GetComponent<Animator>();
         Animator dialogueAnimator = GameObject.Find("DialogueBox").GetComponent<Animator>();
 
         TMPro.TextMeshProUGUI nameText = GameObject.Find("NameText").GetComponent<TMPro.TextMeshProUGUI>();
         TMPro.TextMeshProUGUI bodyText = GameObject.Find("BodyText").GetComponent<TMPro.TextMeshProUGUI>();
 
-        Transition.getInstance().animator = transitionAnimator;
-        
+        Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
+
         DialogueManager.getInstance().animator = dialogueAnimator;
         DialogueManager.getInstance().nameText = nameText;
         DialogueManager.getInstance().dialogueText = bodyText;
