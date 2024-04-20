@@ -25,8 +25,6 @@ public class Game1 : MonoBehaviour
 
         TMPro.TextMeshProUGUI nameText = GameObject.Find("NameText").GetComponent<TMPro.TextMeshProUGUI>();
         TMPro.TextMeshProUGUI bodyText = GameObject.Find("BodyText").GetComponent<TMPro.TextMeshProUGUI>();
-
-        Transition.getInstance().animator = transitionAnimator;
         
         DialogueManager.getInstance().animator = dialogueAnimator;
         DialogueManager.getInstance().nameText = nameText;

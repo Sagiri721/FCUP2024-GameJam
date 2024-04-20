@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour
     public Sprite[] idleSprites;
     public Sprite[] walkFrontSprites;
     public Sprite[] walkBackSprites;
+    
+    public Sprite[] dragBackSprites;
+    public Sprite[] dragFrontprites;
+
     private bool facingFront = true, walking = false;
 
     public Vector3 movement;
@@ -27,6 +31,9 @@ public class PlayerController : MonoBehaviour
 
     public bool isDragging = false;
 
+    public GameObject[] multipliers;
+    public bool[] unlocked;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +41,20 @@ public class PlayerController : MonoBehaviour
         playerSprite = rb.GetComponentInChildren<SpriteRenderer>();
         DontDestroyOnLoad(gameObject);
         spawn = transform.position;
+
+        unlocked = new bool[multipliers.Length];
+
+        int i = 0;
+        foreach(GameObject g in multipliers) {
+            g.SetActive(false);
+            unlocked[i] = false;
+            i++;
+        }
+    }
+
+    public void SetPowerUp(int index){
+        multipliers[index].SetActive(true);
+        unlocked[index] = true;
     }
 
     // Update is called once per frame
@@ -71,13 +92,24 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if(unlocked[1]){
+            multipliers[1].SetActive(
+                playerSprite.sprite == dragFrontprites[1] || playerSprite.sprite == dragFrontprites[0] ||
+                playerSprite.sprite == walkFrontSprites[1] || playerSprite.sprite == walkFrontSprites[0] ||
+                playerSprite.sprite == idleSprites[0]
+            );
+        }
+
         float speed = (Utils.GetKeyAll(stats.runKeys) ? stats.runSpeed * stats.runSpeedMult : stats.walkSpeed);
         if (isDragging) speed = stats.dragSpeed * stats.dragSpeedMult;
 
         Vector2 velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * speed;
         rb.velocity = velocity;
 
-        if(rb.velocity != Vector2.zero && !walking) { StartCoroutine(walkCycle()); }
+        if(rb.velocity != Vector2.zero && !walking) { 
+            
+            StartCoroutine(walkCycle()); 
+        }
         movement = rb.velocity;
     }
 
@@ -109,19 +141,40 @@ public class PlayerController : MonoBehaviour
                     walking = false;
                     yield break;
                 }
-                if(facingFront){
-                    if(playerSprite.sprite == walkFrontSprites[1]){
-                        playerSprite.sprite = walkFrontSprites[0];
+
+                if(isDragging){
+
+                    if(facingFront){
+                        if(playerSprite.sprite == dragFrontprites[1]){
+                            playerSprite.sprite = dragFrontprites[0];
+                        }else{
+                            playerSprite.sprite = dragFrontprites[1];
+                        }
                     }else{
-                        playerSprite.sprite = walkFrontSprites[1];
+                        if(playerSprite.sprite == dragFrontprites[1]){
+                            playerSprite.sprite = dragFrontprites[0];
+                        }else{
+                            playerSprite.sprite = dragFrontprites[1];
+                        }
                     }
+
                 }else{
-                    if(playerSprite.sprite == walkBackSprites[1]){
-                        playerSprite.sprite = walkBackSprites[0];
+
+                    if(facingFront){
+                        if(playerSprite.sprite == walkFrontSprites[1]){
+                            playerSprite.sprite = walkFrontSprites[0];
+                        }else{
+                            playerSprite.sprite = walkFrontSprites[1];
+                        }
                     }else{
-                        playerSprite.sprite = walkBackSprites[1];
+                        if(playerSprite.sprite == walkBackSprites[1]){
+                            playerSprite.sprite = walkBackSprites[0];
+                        }else{
+                            playerSprite.sprite = walkBackSprites[1];
+                        }
                     }
                 }
+
             }
             stridePointer += strideDelta;
             yield return null;

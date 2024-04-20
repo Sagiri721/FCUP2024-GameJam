@@ -9,7 +9,8 @@ public class Monster : MonoBehaviour
     public StateMachine monsterState = StateMachine.WANDER;
     private Light2D monsterLight;
 
-    public Sprite[] images;
+    public Sprite[] images, imded;
+    public int index = 0;
 
     public enum StateMachine {
         WANDER,
@@ -18,7 +19,7 @@ public class Monster : MonoBehaviour
         DEAD,
         DRAG,
         SHOCK,
-        REVIVE
+        ROT
     }
 
     public EnemyStats enemyStats;
@@ -48,6 +49,9 @@ public class Monster : MonoBehaviour
 
     private bool isRotten = false, isEaten = false, vulnerable = false;
 
+    private bool floating = false;
+    public float stridePointer = 0f, strideHeightPercentage = 0.15f, strideDelta = 0.09f;
+
     public static bool targetInSight = false;
 
     void Start()
@@ -66,12 +70,18 @@ public class Monster : MonoBehaviour
         GetComponentsInChildren<Light2D>()[1].pointLightInnerRadius = enemyStats.checkDistance;
         GetComponentsInChildren<Light2D>()[1].pointLightOuterRadius = enemyStats.checkDistance + 0.7f;
 
-        int index = 0;
+        index = 0;
         if (killReward == KillReward.KILLRANGE) index = 0;
         if (killReward == KillReward.DRAGSPEED) index = 1;
         if (killReward == KillReward.RUNSPEED) index = 2;
 
         GetComponent<SpriteRenderer>().sprite = images[index];
+
+        if(index == 0 || index == 2) {
+            floating = true;
+        }
+
+
     }
 
     void Update()
@@ -99,8 +109,6 @@ public class Monster : MonoBehaviour
                     monsterState = StateMachine.DEAD;
                     GetComponentsInChildren<Light2D>()[0].enabled = false;
 
-                    GetComponent<SpriteRenderer>().color = Color.black;
-
                     // DON'T Remove light, just lower intensity and radius
                     GetComponentsInChildren<Light2D>()[1].pointLightInnerRadius = enemyStats.checkDistance / 2;
                     GetComponentsInChildren<Light2D>()[1].pointLightOuterRadius = enemyStats.checkDistance / 2 + 0.7f;
@@ -110,6 +118,7 @@ public class Monster : MonoBehaviour
                     GetComponent<BoxCollider2D>().isTrigger = true;
 
                     //StopAllCoroutines();
+                    GetComponent<SpriteRenderer>().sprite = imded[index];
 
                     // Start rotting process
                     Invoke(nameof(Rot), enemyStats.rotTime - 3);
@@ -165,22 +174,23 @@ public class Monster : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, tween, step);
             }
 
+            if (floating) {}
+
             handlePlayerDetection();
 
         } else {
 
             eatTime -= Time.deltaTime;
-            Debug.Log(eatTime);
             if(distanceFromPlayer < enemyStats.killRadius && !isRotten && !isEaten){
 
                 if(eatTime <= 0f && monsterState == StateMachine.DEAD){
+
                     zKey.enabled = false;
                     xKey.enabled = true;
                     interactArrow.enabled = true;
                     if(Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys)){
                         xKey.enabled = false;
                         interactArrow.enabled = false;
-                        Debug.Log("eating");
                         StartCoroutine(feedProcess());
                     }
                 }else{
@@ -193,6 +203,7 @@ public class Monster : MonoBehaviour
               
                 monsterState = dragKeys ? StateMachine.DRAG : StateMachine.DEAD;  
                 player.GetComponent<PlayerController>().isDragging = dragKeys;
+
             }else{
                 zKey.enabled = false;
                 xKey.enabled = false;
@@ -220,10 +231,13 @@ public class Monster : MonoBehaviour
         }
         switch (killReward){
             case KillReward.KILLRANGE: player.GetComponent<PlayerController>().stats.killRangeMult += player.GetComponent<PlayerController>().stats.killRangeMultDelta;
+                player.GetComponent<PlayerController>().SetPowerUp(0);
                 break;
             case KillReward.DRAGSPEED: player.GetComponent<PlayerController>().stats.dragSpeedMult += player.GetComponent<PlayerController>().stats.dragSpeedMultDelta;
+                player.GetComponent<PlayerController>().SetPowerUp(1);
                 break;
             case KillReward.RUNSPEED: player.GetComponent<PlayerController>().stats.runSpeedMult += player.GetComponent<PlayerController>().stats.runSpeedMultDelta;
+                player.GetComponent<PlayerController>().SetPowerUp(2);
                 break;
             case KillReward.ENDURANCE: player.GetComponent<PlayerController>().stats.enduranceMult += player.GetComponent<PlayerController>().stats.enduranceMultDelta;
                 break;
@@ -233,8 +247,6 @@ public class Monster : MonoBehaviour
     }
 
     void handlePlayerDetection(){
-
-        Debug.DrawLine(transform.position, transform.position + direction);
 
         // Check if in vision cone
         Collider2D[] targetsInRadius = Physics2D.OverlapCircleAll(transform.position, enemyStats.checkDistance, enemyStats.visionMask);
@@ -246,7 +258,6 @@ public class Monster : MonoBehaviour
 
             // Check if in view angle
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            Debug.Log(Vector3.Angle(direction, dirToTarget));
             if(Vector3.Angle(direction, dirToTarget) < (enemyStats.checkAngle / 2)){
 
                 //Check for walls in the way
@@ -294,7 +305,13 @@ public class Monster : MonoBehaviour
 
     void Rot(){
         if(isEaten){return;}
+
+        // can't drag anymore
+        player.GetComponent<PlayerController>().isDragging = false;
+
         isRotten = true;
+        monsterState = StateMachine.ROT;
+
         // Is within angle
         effects.SetBool("twitch", true);
         Invoke(nameof(StopTwitch), 3);
