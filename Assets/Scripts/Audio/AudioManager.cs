@@ -7,9 +7,18 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     public Sound[] sounds;
+    public static bool managerExists;
     void Awake()
     {
-        DontDestroyOnLoad(this);
+        if (!managerExists)
+        {
+            managerExists = true;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         foreach (Sound sound in sounds)
         {
             sound.source = gameObject.AddComponent<AudioSource>();
@@ -54,6 +63,22 @@ public class AudioManager : MonoBehaviour
             yield break;
         }*/
         Sound s = Array.Find(sounds, sound => sound.source.isPlaying && sound.source.loop);
+        if (s == null) { yield break; }
+        float currentTime = 0;
+        float start = s.source.volume;
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+            s.source.volume = Mathf.Lerp(start, 0, currentTime / duration);
+            yield return null;
+        }
+        s.source.volume = start;
+        Debug.Log("Stopping");
+        s.source.Stop();
+    }
+
+    public IEnumerator FadeAny(string name, float duration){
+        Sound s = Array.Find(sounds, sound => sound.name == name);
         if (s == null) { yield break; }
         float currentTime = 0;
         float start = s.source.volume;

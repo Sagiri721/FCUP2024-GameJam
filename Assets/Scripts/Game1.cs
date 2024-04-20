@@ -16,7 +16,9 @@ public class Game1 : MonoBehaviour
 
     void Start()
     {
-
+        if(!FindObjectOfType<AudioManager>().IsCurrentlyPlaying("MainMenu")){
+            FindObjectOfType<AudioManager>().Play("MainMenu");
+        }
         // Get the animators and UI references from loaded scene
         Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
         DontDestroyOnLoad(GameObject.FindWithTag("menuUI"));
