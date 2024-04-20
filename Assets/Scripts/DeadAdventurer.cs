@@ -9,6 +9,8 @@ public class DeadAdventurer : MonoBehaviour
     private Transform player;
     private float distanceFromPlayer, eatTime = 5f;
     private bool isEaten = false;
+    
+    public SpriteRenderer interactArrow, xKey;
 
     // Start is called before the first frame update
     void Start()
@@ -24,8 +26,14 @@ public class DeadAdventurer : MonoBehaviour
     {
         eatTime -= Time.deltaTime;
         float distanceFromPlayer = (player.position - transform.position).magnitude;
-        if(distanceFromPlayer < enemyStats.killRadius && eatTime <= 0f && Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys) && !isEaten){
-            StartCoroutine(feedProcess());
+        if(distanceFromPlayer < enemyStats.killRadius && eatTime <= 0f && !isEaten){
+            interactArrow.enabled = true;
+            xKey.enabled = true;
+            if(Utils.GetKeyDownAll(player.GetComponent<PlayerController>().stats.actionKeys)){
+                interactArrow.enabled = false;
+                xKey.enabled = false;
+                StartCoroutine(feedProcess());
+            }
         }
     }
 

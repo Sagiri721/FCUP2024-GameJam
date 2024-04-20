@@ -7,6 +7,10 @@ public class CameraMovement : MonoBehaviour
     public Transform target;
     public float followSpeed = 2f;
 
+    void Start(){
+        target = GameObject.FindWithTag("Player").transform;
+    }
+
     void FixedUpdate(){
 
         Vector3 newPosition = target.position;

@@ -18,19 +18,20 @@ public class Transition : MonoBehaviour
 
     public static Transition getInstance(){ return instance; }
 
-    public IEnumerator DoTransition(System.Action callback){
+    public IEnumerator DoTransition(System.Action callback, bool onlyDetransition = false){
 
         float alpha = 0;
         float fadeEndValue = 1;
 
-        fadeImage.enabled = true;
-        while (alpha <= fadeEndValue)
-        {
-            SetColorImage(ref alpha, true);
-            yield return null;
+        if(!onlyDetransition){
+            fadeImage.enabled = true;
+            while (alpha <= fadeEndValue)
+            {
+                SetColorImage(ref alpha, true);
+                yield return null;
+            }
         }
 
-        // Do the callback
         callback();
 
         alpha = 1;

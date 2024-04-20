@@ -17,6 +17,7 @@ public class Game : MonoBehaviour
     void Start()
     {
         Destroy(GameObject.FindWithTag("menuUI"));
+        DontDestroyOnLoad(gameObject);
         if(!FindObjectOfType<AudioManager>().IsCurrentlyPlaying("Level")){
             FindObjectOfType<AudioManager>().Play("Level");
         }
@@ -25,7 +26,7 @@ public class Game : MonoBehaviour
         DialogueManager dialogues = DialogueManager.getInstance();
         DontDestroyOnLoad(GameObject.FindWithTag("gameUI"));
 
-        Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
+        //Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
 
         DialogueManager.getInstance().animator = GameObject.Find("DialogueBox").GetComponent<Animator>();
         DialogueManager.getInstance().dialogueText = GameObject.Find("BodyText").GetComponent<TMPro.TextMeshProUGUI>();

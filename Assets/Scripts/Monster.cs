@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
 
 public class Monster : MonoBehaviour
@@ -344,6 +345,7 @@ public class Monster : MonoBehaviour
 
         if(collision.gameObject.tag == "Player" && 
             (monsterState != StateMachine.WANDER && monsterState != StateMachine.STOP) && monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG){
+            Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
             GameObject.Find("AudioManager").GetComponent<AudioManager>().Play("Death");
             FindObjectOfType<AudioManager>().StopBackground();
             StartCoroutine(Transition.getInstance().DoTransition(playerDie));

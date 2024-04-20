@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public float stridePointer = 0f, strideHeightPercentage = 0.15f, strideDelta = 0.09f;
     public static float currentHunger;
     public static bool playerExists, isPaused = false, isStopped = false, isCarrying = false;
+    public bool snapMeDaddy;
     public int direction;
     public Animator animator;
     private Rigidbody2D rb;
