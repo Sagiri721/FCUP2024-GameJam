@@ -215,7 +215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 125.58559, y: 47.52043}
+  m_AnchoredPosition: {x: 125.5, y: 50}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &306634013
@@ -637,7 +637,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 125.58559, y: 104.323715}
+  m_AnchoredPosition: {x: 125.5, y: 125}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &677465767
@@ -981,7 +981,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 227.8769, y: -116.92778}
+  m_AnchoredPosition: {x: 227.88, y: -117.06}
   m_SizeDelta: {x: 455.7538, y: 295.87634}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &886019906
@@ -1488,7 +1488,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 111.21895, y: 163.3401}
+  m_AnchoredPosition: {x: 111.25, y: 200}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1083173096
@@ -1910,6 +1910,12 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     name: Death
+    source: {fileID: 0}
+  - clip: {fileID: 8300000, guid: 49e5a8051aafa7f48970a1444d2f3f44, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    name: Spot
     source: {fileID: 0}
 --- !u!4 &1818167927
 Transform:

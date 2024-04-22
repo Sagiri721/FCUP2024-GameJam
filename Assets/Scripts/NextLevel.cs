@@ -9,18 +9,18 @@ public class NextLevel : MonoBehaviour
     public Vector3 entryPoint;
     public string sceneToLoad;
     void Start(){
-        if(GameObject.FindWithTag("Player").GetComponent<PlayerController>().snapMeDaddy){
-            GameObject.FindWithTag("Player").transform.position = entryPoint;
-        }
+        GameObject.FindWithTag("Player").transform.position = entryPoint;
         StartCoroutine(Transition.getInstance().DoTransition(() => {}, true));
     }
     void OnTriggerEnter2D(Collider2D other){
         Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();
-        other.gameObject.GetComponent<PlayerController>().snapMeDaddy = true;
         StartCoroutine(Transition.getInstance().DoTransition(LoadNextLevel));
     }
 
     void LoadNextLevel(){
+        if(sceneToLoad == "potion"){
+            FindObjectOfType<AudioManager>().StopAllSound();
+        }
         SceneManager.LoadScene(sceneToLoad);
     }
 }

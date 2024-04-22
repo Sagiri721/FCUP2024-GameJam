@@ -32,4 +32,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Floor1 3.unity
     guid: 9ede0823ebc227e46b3255d11715f3a3
+  - enabled: 1
+    path: Assets/Scenes/potion.unity
+    guid: 265f33c087231654a804ab2610005587
+  - enabled: 1
+    path: Assets/Scenes/good end.unity
+    guid: 6626e3abed965a1468254732befd6517
+  - enabled: 1
+    path: Assets/Scenes/Bad ending.unity
+    guid: 7c0e74013515d424ebb9c28cd6f1b06f
   m_configObjects: {}

@@ -35,6 +35,15 @@ public class CooldownHandler : MonoBehaviour
             }
             killType = -1;
         }
+        if(boostCount1 == 0){
+            GetComponentsInChildren<TextMeshProUGUI>(true)[0].GetComponent<RectTransform>().parent.gameObject.SetActive(false);
+        }
+        if(boostCount2 == 0){
+            GetComponentsInChildren<TextMeshProUGUI>(true)[1].GetComponent<RectTransform>().parent.gameObject.SetActive(false);
+        }
+        if(boostCount3 == 0){
+            GetComponentsInChildren<TextMeshProUGUI>(true)[2].GetComponent<RectTransform>().parent.gameObject.SetActive(false);
+        }
     }
 
     public IEnumerator cooldownHandler(){

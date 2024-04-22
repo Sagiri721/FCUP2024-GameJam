@@ -274,6 +274,9 @@ public class Monster : MonoBehaviour
 
                 if (!ray && monsterState != StateMachine.CHASE){
 
+                    if(monsterState != StateMachine.SHOCK){
+                        FindObjectOfType<AudioManager>().Play("Spot");
+                    }
                     // Is within angle
                     shockSign.enabled = true;
                     interactArrow.enabled = false;
@@ -342,7 +345,6 @@ public class Monster : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D collision){
-
         if(collision.gameObject.tag == "Player" && 
             (monsterState != StateMachine.WANDER && monsterState != StateMachine.STOP) && monsterState != StateMachine.DEAD && monsterState != StateMachine.DRAG){
             Transition.getInstance().fadeImage = GameObject.Find("FadeImage").GetComponent<Image>();

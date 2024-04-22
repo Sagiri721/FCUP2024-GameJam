@@ -47,7 +47,7 @@ public class DeadAdventurer : MonoBehaviour
             while(a != null) { yield return null; }
             counter++;
         }
-        player.GetComponent<PlayerController>().stats.currentHunger = player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
+        PlayerController.currentHunger += player.GetComponent<PlayerController>().stats.maxHunger * player.GetComponent<PlayerController>().stats.hungerRestorePercent;
         Destroy(gameObject);
     }
 }

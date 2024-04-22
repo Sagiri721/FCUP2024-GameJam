@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     public float stridePointer = 0f, strideHeightPercentage = 0.15f, strideDelta = 0.09f;
     public static float currentHunger;
     public static bool playerExists, isPaused = false, isStopped = false, isCarrying = false;
-    public bool snapMeDaddy;
     public int direction;
     public Animator animator;
     private Rigidbody2D rb;
@@ -39,6 +38,15 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (!playerExists)
+        {
+            playerExists = true;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         rb = GetComponent<Rigidbody2D>();
         playerSprite = rb.GetComponentInChildren<SpriteRenderer>();
         DontDestroyOnLoad(gameObject);
@@ -76,7 +84,7 @@ public class PlayerController : MonoBehaviour
         currentHunger += stats.hungerDelta * Time.deltaTime;
         if(currentHunger <= 0){
             StopCoroutine(walkCycle());
-            //Death sequence
+            Die();
             return;
         }
         if(Input.anyKeyDown){
@@ -120,6 +128,21 @@ public class PlayerController : MonoBehaviour
     }
 
     public void Die(){
+
+        stats.runSpeedMult = 1f;
+        stats.dragSpeedMult = 1f;
+        stats.killRangeMult = 1f;
+
+        int i = 0;
+        foreach(GameObject g in multipliers) {
+            g.SetActive(false);
+            unlocked[i] = false;
+            i++;
+        }
+
+        CooldownHandler.boostCount1 = 0;
+        CooldownHandler.boostCount2 = 0;
+        CooldownHandler.boostCount3 = 0;
 
         SceneManager.LoadScene("You died");
     }

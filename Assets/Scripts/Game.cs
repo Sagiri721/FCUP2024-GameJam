@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
+    public bool managerExists;
 
     void Awake(){
 
@@ -16,8 +17,16 @@ public class Game : MonoBehaviour
 
     void Start()
     {
+        if (!managerExists)
+        {
+            managerExists = true;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         Destroy(GameObject.FindWithTag("menuUI"));
-        DontDestroyOnLoad(gameObject);
         if(!FindObjectOfType<AudioManager>().IsCurrentlyPlaying("Level")){
             FindObjectOfType<AudioManager>().Play("Level");
         }
